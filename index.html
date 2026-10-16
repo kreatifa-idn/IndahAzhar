@@ -1537,6 +1537,32 @@
             }
         }
 
+        // --- TAMBAHAN KODE: Hentikan musik saat keluar Chrome, minimize, atau pindah tab/tombol tengah ---
+        function stopMusicOnExit() {
+            if (audio && !audio.paused) {
+                audio.pause();
+                audio.currentTime = 0;
+                if (musicBtn) musicBtn.classList.remove('music-rotating');
+                const iconSvg = document.getElementById('music-icon-svg');
+                if (iconSvg) iconSvg.innerHTML = `<path d="M4.27 3L3 4.27l9 9v.28c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4v-1.73L19.73 21 21 19.73 4.27 3zM14 7h4V3h-6v5.18l2 2z"/>`;
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopMusicOnExit();
+            }
+        });
+
+        window.addEventListener('pagehide', () => {
+            stopMusicOnExit();
+        });
+
+        window.addEventListener('blur', () => {
+            stopMusicOnExit();
+        });
+        // --------------------------------------------------------------------------------------------------
+
         function moveSlide(direction) {
             const slider = document.getElementById('slider');
             if (!slider) return;
