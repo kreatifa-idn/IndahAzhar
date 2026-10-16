@@ -1158,7 +1158,7 @@
 </head>
 <body>
 
-    <audio id="bg-music" src="lagu.mp3" loop></audio>
+    <audio id="bg-music" src="lagu.mp3"></audio>
 
     <div class="app-container">
 
@@ -1285,7 +1285,7 @@
                         <img src="g1.jpg" class="png-asset grid-delay-1" alt="grid-1">
                     </div>
                     <div class="grid-item-box" onclick="openLightbox(this)">
-                        <img src="g2.jpg" class="png-asset grid-delay-2" alt="grid-2">
+                        <img src="foto5.jpg" class="png-asset grid-delay-2" alt="grid-2">
                     </div>
                     <div class="grid-item-box" onclick="openLightbox(this)">
                         <img src="g3.jpg" class="png-asset grid-delay-3" alt="grid-3">
@@ -1296,7 +1296,7 @@
                 </div>
             </section>
 
-            <!-- HALAMAN 10 (GALERI SLIDE FEEDS INSTAGRAM 1:1 - 5 FOTO) -->
+            <!-- HALAMAN 10 (GALERI SLIDE FEEDS INSTAGRAM 1:1 - 4 FOTO) -->
             <section class="page overlay-page" id="page10">
                 <img src="frame.png" class="gallery-frame" alt="Frame Galeri">
                 <div class="gallery-container">
@@ -1307,16 +1307,13 @@
                             <img src="foto1.jpg" class="gallery-item" alt="Foto 1">
                         </div>
                         <div class="gallery-item-wrapper" onclick="openLightbox(this)">
-                            <img src="foto2.jpg" class="gallery-item" alt="Foto 2">
+                            <img src="foto5.jpg" class="gallery-item" alt="Foto 2">
                         </div>
                         <div class="gallery-item-wrapper" onclick="openLightbox(this)">
                             <img src="foto3.jpg" class="gallery-item" alt="Foto 3">
                         </div>
                         <div class="gallery-item-wrapper" onclick="openLightbox(this)">
                             <img src="foto4.jpg" class="gallery-item" alt="Foto 4">
-                        </div>
-                        <div class="gallery-item-wrapper" onclick="openLightbox(this)">
-                            <img src="foto5.jpg" class="gallery-item" alt="Foto 5">
                         </div>
                     </div>
                     
@@ -1472,6 +1469,8 @@
         const musicBtn = document.getElementById('music-toggle-btn');
         const sideControls = document.getElementById('side-controls');
         
+        let isFirstPlay = true; // Penanda untuk putaran pertama kali
+
         function bukaUndangan() {
             const cover = document.getElementById('main-cover');
             if (!cover || !content) return;
@@ -1479,6 +1478,9 @@
             cover.classList.add('slide-down'); 
             
             if (audio && musicBtn) {
+                if (isFirstPlay) {
+                    audio.currentTime = 46; // Mulai dari detik ke-46 khusus saat pertama kali dibuka
+                }
                 audio.play().then(() => {
                     musicBtn.classList.add('music-rotating');
                 }).catch(err => console.log("Autoplay musik diblokir browser."));
@@ -1527,6 +1529,9 @@
             if (!audio || !musicBtn) return;
             const iconSvg = document.getElementById('music-icon-svg');
             if (audio.paused) {
+                if (isFirstPlay && audio.currentTime === 0) {
+                    audio.currentTime = 46;
+                }
                 audio.play();
                 musicBtn.classList.add('music-rotating');
                 if (iconSvg) iconSvg.innerHTML = `<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>`;
@@ -1537,11 +1542,21 @@
             }
         }
 
-        // --- TAMBAHAN KODE: Hentikan musik saat keluar Chrome, minimize, atau pindah tab/tombol tengah ---
+        // --- PENGATURAN MUSIK: Detik 46 di awal, lalu looping normal dari detik ke-0 ---
+        if (audio) {
+            audio.addEventListener('ended', () => {
+                isFirstPlay = false;
+                audio.currentTime = 0;
+                audio.play();
+            });
+        }
+
+        // --- PENGATURAN KELUAR CHROME / MINIMIZE ---
         function stopMusicOnExit() {
             if (audio && !audio.paused) {
                 audio.pause();
                 audio.currentTime = 0;
+                isFirstPlay = true; // Reset kembali ke awal saat keluar browser/aplikasi
                 if (musicBtn) musicBtn.classList.remove('music-rotating');
                 const iconSvg = document.getElementById('music-icon-svg');
                 if (iconSvg) iconSvg.innerHTML = `<path d="M4.27 3L3 4.27l9 9v.28c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4v-1.73L19.73 21 21 19.73 4.27 3zM14 7h4V3h-6v5.18l2 2z"/>`;
