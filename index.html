@@ -1656,7 +1656,6 @@
                     elHours.innerText = "00";
                     elMinutes.innerText = "00";
                     elSeconds.innerText = "00";
-                    clearInterval(intervalId);
                     return;
                 }
 
@@ -1672,7 +1671,7 @@
             }
 
             updateTimer();
-            const intervalId = setInterval(updateTimer, 1000);
+            setInterval(updateTimer, 1000);
         }
 
         function salinNoRek(text, element) {
